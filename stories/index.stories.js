@@ -6,4 +6,6 @@ import {linkTo} from '@storybook/addon-links';
 
 import PopInput from '../src/PopInput';
 
-storiesOf('PopInput', module).add('Simple', () => <PopInput value="Volvo"/>);
+storiesOf('PopInput', module).add('Simple', () => <PopInput value="Volvo" onSave={val => {
+    console.log("Value : ", val)
+}}/>);

@@ -8,6 +8,7 @@ import './style.css';
 interface PopInputProps {
     inputClassName?: string;
     inputPosition?: string;
+    onSave : Function;
     rootClassName?: string;
     saveOnEnter : boolean;
     style?: object;
@@ -31,6 +32,7 @@ PopInputState > {
     public static defaultProps : Partial < PopInputProps > = {
         inputClassName: '',
         inputPosition: 'bottom',
+        onSave: () => {},
         rootClassName: '',
         saveOnEnter: true,
         value: ''
@@ -59,6 +61,9 @@ PopInputState > {
 
     _handleSave = (value : string) : void => {
         this.setState({value: value, isPopVisible: false});
+        this
+            .props
+            .onSave(value);
     }
 
     _renderInput = (opt : InputOptions) : JSX.Element => {
@@ -83,7 +88,7 @@ PopInputState > {
                 ? rootClassName
                 : ''}`}
                 style={style}>
-                <span onClick={this._toggleInput}>{this.state.value}</span>
+                <span className="PopInput__Root" onClick={this._toggleInput}>{this.state.value}</span>
                 {this.state.isPopVisible && this._renderInput({value: this.state.inputValue, className: inputClassName, saveOnEnter})}
             </span>
         );
