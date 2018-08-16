@@ -1,0 +1,12 @@
+.PopInput {
+    position: relative;
+}
+
+.PopInput .PopInput__Input {
+    position: absolute;
+}
+
+.PopInput.bottom .PopInput__Input {
+    top: 100%;
+    left: 0;
+}
