@@ -1,5 +1,8 @@
 .PopInput {
     position: relative;
+    color: rgb(62, 104, 219);
+    text-decoration: underline;
+    text-decoration-style: dotted;
 }
 
 .PopInput__Root:hover {

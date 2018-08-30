@@ -6,6 +6,7 @@ import React, {FormEvent} from 'react';
 import './style.css';
 
 interface PopInputProps {
+    closeOnEsc?: boolean;
     inputClassName?: string;
     inputPosition?: string;
     onSave : Function;
@@ -23,6 +24,7 @@ interface PopInputState {
 
 interface InputOptions {
     className?: string;
+    closeOnEsc?: boolean;
     saveOnEnter : boolean;
     value : string;
 }
@@ -30,6 +32,7 @@ interface InputOptions {
 export default class PopInput extends React.Component < PopInputProps,
 PopInputState > {
     public static defaultProps : Partial < PopInputProps > = {
+        closeOnEsc: true,
         inputClassName: '',
         inputPosition: 'bottom',
         onSave: () => {},
@@ -59,6 +62,19 @@ PopInputState > {
         this.setState({inputValue: e.currentTarget.value});
     }
 
+    _handleKeyPress = (e : any, opt : InputOptions) => {
+        if (opt.saveOnEnter && e.key === 'Enter') {
+            this._handleSave(opt.value);
+            return;
+        }
+
+        if (opt.closeOnEsc && e.key === 'Escape') {
+            this.setState({inputValue: this.state.value});
+            this._toggleInput();
+            return;
+        }
+    }
+
     _handleSave = (value : string) : void => {
         this.setState({value: value, isPopVisible: false});
         this
@@ -72,15 +88,11 @@ PopInputState > {
             type="text"
             value={opt.value}
             onChange={this._handleChange}
-            onKeyPress={(e : any) => {
-            if (opt.saveOnEnter && e.key === 'Enter') {
-                this._handleSave(opt.value);
-            }
-        }}/>;
+            onKeyDown={(e : any) => this._handleKeyPress(e, opt)}/>;
     }
 
     render() {
-        let {rootClassName, inputClassName, inputPosition, style, saveOnEnter} = this.props;
+        let {rootClassName, inputClassName, inputPosition, style, closeOnEsc, saveOnEnter} = this.props;
 
         return (
             <span
@@ -89,7 +101,7 @@ PopInputState > {
                 : ''}`}
                 style={style}>
                 <span className="PopInput__Root" onClick={this._toggleInput}>{this.state.value}</span>
-                {this.state.isPopVisible && this._renderInput({value: this.state.inputValue, className: inputClassName, saveOnEnter})}
+                {this.state.isPopVisible && this._renderInput({value: this.state.inputValue, className: inputClassName, closeOnEsc, saveOnEnter})}
             </span>
         );
     }
