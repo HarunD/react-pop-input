@@ -7,6 +7,7 @@ import './style.css';
 
 interface PopInputProps {
     closeOnEsc?: boolean;
+    closeOnOutsideClick?: boolean;
     inputClassName?: string;
     inputPosition?: string;
     onSave : Function;
@@ -25,6 +26,7 @@ interface PopInputState {
 interface InputOptions {
     className?: string;
     closeOnEsc?: boolean;
+    closeOnOutsideClick?: boolean;
     saveOnEnter : boolean;
     value : string;
 }
@@ -33,6 +35,7 @@ export default class PopInput extends React.Component < PopInputProps,
 PopInputState > {
     public static defaultProps : Partial < PopInputProps > = {
         closeOnEsc: true,
+        closeOnOutsideClick: true,
         inputClassName: '',
         inputPosition: 'bottom',
         onSave: () => {},
@@ -50,12 +53,34 @@ PopInputState > {
         };
     }
 
-    componentDidUpdate(prevProps : any, prevState : any) {}
+    _handleOutsideClickListener = (isPopVisible : boolean) : void => {
+        if (isPopVisible) {
+            document.addEventListener('mousedown', this._handleOutsideClick);
+        } else {
+            document.removeEventListener('mousedown', this._handleOutsideClick);
+        }
+
+    }
+
+    _handleOutsideClick = (e : MouseEvent) : void => {
+        let t = e.target as HTMLElement;
+        if (t && t.id !== 'floater') {
+            this._hideInput();
+        }
+    }
+
+    _hideInput = () => {
+        this.setState({inputValue: this.state.value, isPopVisible: false});
+    }
 
     _toggleInput = () : void => {
-        this.setState({
-            isPopVisible: !this.state.isPopVisible
-        });
+        const isPopVisible = !this.state.isPopVisible;
+
+        if (isPopVisible && this.props.closeOnOutsideClick) {
+            this._handleOutsideClickListener(isPopVisible);
+        }
+
+        this.setState({isPopVisible});
     }
 
     _handleChange = (e : FormEvent < HTMLInputElement >) : void => {
@@ -69,9 +94,7 @@ PopInputState > {
         }
 
         if (opt.closeOnEsc && e.key === 'Escape') {
-            this.setState({inputValue: this.state.value});
-            this._toggleInput();
-            return;
+            this._hideInput();
         }
     }
 
@@ -84,6 +107,7 @@ PopInputState > {
 
     _renderInput = (opt : InputOptions) : JSX.Element => {
         return <input
+            id="floater"
             className={`PopInput__Input ${opt.className}`}
             type="text"
             value={opt.value}
@@ -92,7 +116,14 @@ PopInputState > {
     }
 
     render() {
-        let {rootClassName, inputClassName, inputPosition, style, closeOnEsc, saveOnEnter} = this.props;
+        let {
+            rootClassName,
+            inputClassName,
+            inputPosition,
+            style,
+            closeOnEsc,
+            saveOnEnter
+        } = this.props;
 
         return (
             <span
