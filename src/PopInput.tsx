@@ -2,6 +2,8 @@
     React Pop Input
     todo:
     - optional label
+    - optional isRequired
+    - optional close icon
 */
 import React, {FormEvent} from 'react';
 
