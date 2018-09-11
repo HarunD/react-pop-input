@@ -1,5 +1,7 @@
 /*
     React Pop Input
+    todo:
+    - optional label
 */
 import React, {FormEvent} from 'react';
 
@@ -106,13 +108,15 @@ PopInputState > {
     }
 
     _renderInput = (opt : InputOptions) : JSX.Element => {
-        return <input
-            id="floater"
-            className={`PopInput__Input ${opt.className}`}
-            type="text"
-            value={opt.value}
-            onChange={this._handleChange}
-            onKeyDown={(e : any) => this._handleKeyPress(e, opt)}/>;
+        return (
+            <div className="PopInput__Input-Wrapper"><input
+                id="floater"
+                className={`PopInput__Input ${opt.className}`}
+                type="text"
+                value={opt.value}
+                onChange={this._handleChange}
+                onKeyDown={(e : any) => this._handleKeyPress(e, opt)}/></div>
+        );
     }
 
     render() {
